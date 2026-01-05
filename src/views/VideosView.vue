@@ -3,25 +3,35 @@
     <div class="header">
       <div class="badge">🎞️</div>
       <h2>鋒兄影片庫</h2>
-      <div class="actions">
-        <button class="btn primary">新增影片</button>
-      </div>
-    </div>
-    <div class="toolbar">
-      <input class="search" placeholder="搜尋影片名稱..." />
-      <button class="btn">🔍 搜尋</button>
     </div>
     <div class="cards">
-      <div class="card" v-for="n in 2" :key="n">
-        <div class="thumb video"></div>
+      <div class="card" v-for="video in videos" :key="video.name">
+        <div class="video-container">
+          <video controls :src="video.url" preload="metadata"></video>
+        </div>
         <div class="meta">
-          <div class="name">示例影片 {{ n }}</div>
-          <div class="info">MP4 · 時長 01:23</div>
+          <div class="name">{{ video.name }}</div>
+          <div class="info">MP4 · 影片連結</div>
         </div>
       </div>
     </div>
   </section>
 </template>
+
+<script setup>
+import { ref } from 'vue';
+
+const videos = ref([
+  {
+    name: '鋒兄進化Show🔥',
+    url: 'https://api.stormkit.io/volumes/file/3JuhcYl49BXMV77YR4ttg9tpGn7MQabiRMONbblmNa8OQHqGiQ=='
+  },
+  {
+    name: '鋒兄的傳奇人生',
+    url: 'https://api.stormkit.io/volumes/file/ZeShsHQ7zp0qfCNCnTjhcIiLL3wd0sLK27DHYEsPw2v0JXzRIA=='
+  }
+]);
+</script>
 
 <style scoped>
 .page {
@@ -73,6 +83,16 @@
   background: rgba(255,255,255,0.08);
   border-radius: 12px;
   overflow: hidden;
+}
+.video-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+}
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 .thumb.video {
   height: 140px;

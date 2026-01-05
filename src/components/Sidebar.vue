@@ -8,6 +8,7 @@
       <RouterLink to="/" class="item"><span class="icon">🏠</span>首頁</RouterLink>
       <RouterLink to="/images" class="item"><span class="icon">🖼️</span>圖片庫</RouterLink>
       <RouterLink to="/videos" class="item"><span class="icon">🎬</span>影片庫</RouterLink>
+      <RouterLink to="/lyrics" class="item"><span class="icon">🎵</span>鋒兄音樂歌詞</RouterLink>
       <RouterLink to="/subscriptions" class="item"><span class="icon">📋</span>訂閱管理</RouterLink>
       <RouterLink to="/foods" class="item"><span class="icon">🍎</span>食品管理</RouterLink>
       <RouterLink to="/settings" class="item"><span class="icon">⚙️</span>系統設定</RouterLink>

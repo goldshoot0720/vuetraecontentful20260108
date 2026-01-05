@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import ImagesView from '../views/ImagesView.vue'
 import VideosView from '../views/VideosView.vue'
+import LyricsView from '../views/LyricsView.vue'
 import SubscriptionsView from '../views/SubscriptionsView.vue'
 import FoodsView from '../views/FoodsView.vue'
 import SettingsView from '../views/SettingsView.vue'
@@ -29,6 +30,11 @@ const router = createRouter({
       path: '/videos',
       name: 'videos',
       component: VideosView,
+    },
+    {
+      path: '/lyrics',
+      name: 'lyrics',
+      component: LyricsView,
     },
     {
       path: '/subscriptions',
