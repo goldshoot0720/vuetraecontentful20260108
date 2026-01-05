@@ -393,7 +393,7 @@ const lyricsList = ref([
       },
       {
         label: '英文版',
-        url: '',
+        url: 'https://api.stormkit.io/volumes/file/q-T4UYAZ2UKqp9X5J7kZihgo1GSFf45CS45AIEHYDcDSjaV6Dg==',
         lyrics: `The Beginning 
  On June 15, 2004, this day marks when junior high school graduates could leave commemorative signatures in their yearbook, and it was also the beginning of everything for our story's protagonist, Tu Shen: Tu Sanjie, later known as Tu Ge. 
  
@@ -426,7 +426,7 @@ const lyricsList = ref([
       },
       {
         label: '日語版',
-        url: '',
+        url: 'https://api.stormkit.io/volumes/file/eN3ese-QPHlgHn_ohYLEMD-ayYX_FD2RBvvtlWH3kAodbJZHTQ==',
         lyrics: `2004年6月15日、この日は中学校の卒業生が年鑑に記念のサインを残せる日であり、物語の主人公、塗神こと塗三杰（後に塗哥として知られる）の全ての始まりでした。塗哥は台中の小さなスナックショップにいました。彼の仲間である通行（塗哥の師匠。同じ姓と名）はテレビを指差し、台北でのひまわり運動の勃発について言及しました。 
  塗哥は「政治のことはよくわからない。菓子を買いに行こう」と答えました。彼は馮兄から、彰化にはひまわりがたくさんあると聞き、来月に彰化の農場への日帰り旅行を計画していました。通の職業習慣が作動し、農場建設について専門的に話し合いました。馮兄の小さな歴史クラスリンの弟子は、「ロボットが電気工を置き換えるかもしれない」と言いました。 
  
