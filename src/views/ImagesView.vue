@@ -136,7 +136,7 @@ const images = ref([
   },
   {
     name: 'ChatGPT Image 2025年12月17日 下午01_28_57.png',
-    url: ''
+    url: 'https://api.stormkit.io/volumes/file/LUrucK0Ue2ZALNJJBeKJlTzinuuQgb6Kh48p-f-DTa_l6iy5aw=='
   },
   {
     name: 'ChatGPT Image 2025年12月17日 下午01_23_17.png',
