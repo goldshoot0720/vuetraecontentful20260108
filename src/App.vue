@@ -132,4 +132,25 @@ onUnmounted(() => {
     padding: 16px;
   }
 }
+
+/* iPhone SE (375px) and small mobile devices adjustments */
+@media (max-width: 375px) {
+  .topbar {
+    padding: 0 12px;
+    height: 50px;
+    gap: 12px;
+  }
+  .topbar h1 {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .menu-toggle {
+    padding: 6px;
+  }
+  .main {
+    padding: 12px;
+  }
+}
 </style>

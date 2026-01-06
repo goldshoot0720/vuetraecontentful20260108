@@ -85,4 +85,19 @@ defineEmits(['close'])
   width: 22px;
   text-align: center;
 }
+
+/* iPhone SE (375px) and small mobile devices adjustments */
+@media (max-width: 375px) {
+  .sidebar {
+    width: 80vw; /* Use viewport width instead of fixed pixel width */
+    max-width: 300px;
+    padding: 20px 12px;
+  }
+  .brand {
+    margin-bottom: 20px;
+  }
+  .item {
+    padding: 12px 10px; /* Increase touch target */
+  }
+}
 </style>
