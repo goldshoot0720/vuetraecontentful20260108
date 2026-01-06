@@ -172,11 +172,19 @@ onMounted(() => {
   color: #fff;
 }
 .header {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.header h2 {
+  flex: 1;
+  min-width: 150px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
 }
 .badge {
   width: 36px;
@@ -186,6 +194,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 .actions .btn {
   background: rgba(255,255,255,0.2);
@@ -193,7 +202,7 @@ onMounted(() => {
   color: #fff;
   padding: 8px 12px;
   border-radius: 8px;
-  margin-left: 8px;
+  margin-left: 0;
 }
 .actions .primary {
   background: #ff5a5f;
@@ -319,5 +328,32 @@ onMounted(() => {
 }
 .modal-actions .btn.primary {
   background: #4facfe;
+}
+
+@media (max-width: 700px) {
+  .item {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .ops {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+  .header {
+    margin-bottom: 16px;
+  }
+  .actions {
+    width: 100%;
+    margin-top: 8px;
+    justify-content: flex-start;
+  }
+  .actions .btn {
+    flex: 1;
+  }
+  .modal {
+    width: 95%;
+    padding: 20px;
+  }
 }
 </style>

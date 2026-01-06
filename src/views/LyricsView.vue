@@ -610,6 +610,23 @@ const closeModal = () => {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+@media (max-width: 600px) {
+  .header {
+    flex-wrap: wrap;
+  }
+  .actions {
+    width: 100%;
+    margin-top: 10px;
+    margin-left: 0;
+  }
+  .actions .btn {
+    width: 100%;
+  }
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
 .audio-player-section {
   margin-top: 20px;
   margin-bottom: 10px;

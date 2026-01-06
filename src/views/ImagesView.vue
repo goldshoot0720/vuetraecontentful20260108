@@ -265,14 +265,38 @@ const images = ref([
   font-size: 12px;
   opacity: 0.9;
 }
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 800px) {
   .cards {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 500px) {
   .cards {
     grid-template-columns: 1fr;
+  }
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .header h2 {
+    flex: 1;
+    margin-left: 8px;
+    font-size: 1.2rem;
+  }
+  .actions {
+    width: 100%;
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+  }
+  .actions .btn {
+    flex: 1;
+    margin-left: 0;
   }
 }
 </style>

@@ -257,4 +257,9 @@ onMounted(() => {
     grid-template-columns: 1fr 1fr;
   }
 }
+@media (max-width: 480px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

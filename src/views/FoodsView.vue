@@ -99,17 +99,17 @@ const openModal = (item = null) => {
     formData.amount = item.get('amount');
     formData.price = item.get('price');
     formData.shop = item.get('shop');
-    const date = item.get('todate');
-    formData.todate = date ? new Date(date).toISOString().split('T')[0] : '';
+    formData.todate = item.get('todate') ? item.get('todate').toISOString().substr(0, 10) : '';
     formData.photo = item.get('photo');
   } else {
-    // Reset form
-    formData.name = '';
-    formData.amount = 0;
-    formData.price = 0;
-    formData.shop = '';
-    formData.todate = '';
-    formData.photo = '';
+    Object.assign(formData, {
+      name: '',
+      amount: 0,
+      price: 0,
+      shop: '',
+      todate: '',
+      photo: ''
+    });
   }
   showModal.value = true;
 };
@@ -119,29 +119,38 @@ const closeModal = () => {
   editingItem.value = null;
 };
 
+const fetchData = async () => {
+  try {
+    const query = new Parse.Query('Food');
+    query.descending('todate');
+    foods.value = await query.find();
+  } catch (error) {
+    console.error('Error fetching foods:', error);
+  }
+};
+
 const saveFood = async () => {
   try {
-    const Food = Parse.Object.extend('food');
     let food;
-
     if (editingItem.value) {
       food = editingItem.value;
     } else {
+      const Food = Parse.Object.extend('Food');
       food = new Food();
     }
-
+    
     food.set('name', formData.name);
-    food.set('amount', Number(formData.amount));
-    food.set('price', Number(formData.price));
+    food.set('amount', formData.amount);
+    food.set('price', formData.price);
     food.set('shop', formData.shop);
     if (formData.todate) {
       food.set('todate', new Date(formData.todate));
     }
     food.set('photo', formData.photo);
-
+    
     await food.save();
     closeModal();
-    fetchData(); // Refresh list
+    fetchData();
   } catch (error) {
     console.error('Error saving food:', error);
     alert('儲存失敗：' + error.message);
@@ -149,30 +158,12 @@ const saveFood = async () => {
 };
 
 const deleteFood = async (item) => {
-  if (!confirm('確定要刪除此食品嗎？')) return;
-  
+  if (!confirm('確定要刪除嗎？')) return;
   try {
     await item.destroy();
-    fetchData(); // Refresh list
+    fetchData();
   } catch (error) {
     console.error('Error deleting food:', error);
-    alert('刪除失敗：' + error.message);
-  }
-};
-
-const fetchData = async () => {
-  try {
-    // 根據截圖，Class 名稱是小寫的 'food'
-    const Food = Parse.Object.extend('food');
-    const query = new Parse.Query(Food);
-    
-    // 依據到期日排序，快過期的排前面
-    query.ascending('todate');
-
-    // 根據截圖欄位：name, amount, todate, photo, price, shop
-    foods.value = await query.find();
-  } catch (error) {
-    console.error('Error fetching foods:', error);
   }
 };
 
@@ -277,25 +268,25 @@ onMounted(() => {
   opacity: 0.9;
   margin: 6px 0;
 }
+.ops {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
 .ops .btn {
-  background: rgba(255,255,255,0.2);
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
   border: none;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 8px;
-  margin-right: 6px;
+  cursor: pointer;
 }
-.ops .danger {
-  background: #ff5a5f;
-}
-@media (max-width: 1000px) {
-  .cards {
-    grid-template-columns: 1fr;
-  }
+.ops .btn.danger {
+  background: rgba(255, 90, 95, 0.2);
+  color: #ff5a5f;
 }
 .shop-tag {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,0.1);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 12px;
@@ -380,5 +371,35 @@ onMounted(() => {
 }
 .modal-actions .btn.primary {
   background: #4facfe;
+}
+
+@media (max-width: 900px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .header h2 {
+    flex: 1;
+    margin-left: 8px;
+  }
+  .actions {
+    width: 100%;
+    margin-top: 10px;
+    margin-left: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .actions .btn {
+    flex: 1;
+  }
 }
 </style>

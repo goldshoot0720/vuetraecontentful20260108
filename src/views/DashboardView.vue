@@ -29,11 +29,14 @@
   color: #fff;
 }
 .header {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.header h2 {
+  flex: 1;
 }
 .badge {
   width: 36px;
@@ -43,6 +46,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 .actions .btn {
   background: rgba(255,255,255,0.2);

@@ -43,7 +43,7 @@
         <h3>資料結構管理</h3>
         <p class="desc">管理 Back4app 資料庫結構。</p>
         
-        <div class="actions" style="justify-content: flex-start; gap: 12px;">
+        <div class="actions start">
           <button class="btn" @click="initFoodSchema">初始化 Food Class Schema</button>
           <button class="btn" @click="initSubscriptionSchema">初始化 Subscription Class Schema</button>
         </div>
@@ -53,7 +53,7 @@
         <h3>資料匯出</h3>
         <p class="desc">將資料匯出為 CSV 檔案以進行備份或分析。</p>
         
-        <div class="actions" style="justify-content: flex-start; gap: 12px;">
+        <div class="actions start">
           <button class="btn" @click="exportFoodCSV">匯出 back4appfood.csv</button>
           <button class="btn" @click="exportSubscriptionCSV">匯出 back4appsubscription.csv</button>
         </div>
@@ -63,7 +63,7 @@
         <h3>資料匯入</h3>
         <p class="desc">根據匯出的 CSV 格式匯入資料至 Back4app。</p>
         
-        <div class="actions" style="justify-content: flex-start; gap: 12px;">
+        <div class="actions start">
           <input type="file" ref="foodFile" accept=".csv" style="display: none" @change="handleFoodImport">
           <button class="btn" @click="$refs.foodFile.click()">匯入 Food CSV</button>
           
@@ -486,6 +486,11 @@ const initSubscriptionSchema = async () => {
   margin-top: 24px;
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.actions.start {
+  justify-content: flex-start;
 }
 .btn {
   border: none;
@@ -577,8 +582,18 @@ input:focus {
   cursor: pointer;
   transition: background 0.2s;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .copy-btn:hover {
   background: rgba(255,255,255,0.25);
+}
+
+@media (max-width: 600px) {
+  .actions {
+    justify-content: flex-start;
+  }
+  .actions .btn {
+    width: 100%;
+  }
 }
 </style>
