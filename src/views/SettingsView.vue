@@ -43,6 +43,18 @@
       </div>
 
       <div class="card" style="margin-top: 20px;">
+        <h3>系統初始化 (Schema Setup)</h3>
+        <p class="desc">自動建立 Food 與 Subscription 的 Content Types (需 Management Token)。</p>
+        
+        <div class="actions start">
+          <button class="btn primary" @click="initializeContentTypes">🚀 初始化 Content Types</button>
+        </div>
+        <div v-if="initStatus" class="status-log">
+          {{ initStatus }}
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 20px;">
         <h3>資料匯出</h3>
         <p class="desc">將資料從 Contentful 匯出為 CSV 檔案。</p>
         
@@ -87,6 +99,7 @@ const spaceId = ref('');
 const accessToken = ref('');
 const managementToken = ref('');
 const managementTestStatus = ref('');
+const initStatus = ref('');
 const importStatus = ref('');
 const importInput = ref(null);
 
@@ -151,6 +164,72 @@ const testManagementToken = async () => {
       return;
     }
     managementTestStatus.value = `測試失敗：${error?.message || 'Unknown error'}`;
+  }
+};
+
+const initializeContentTypes = async () => {
+  if (!managementToken.value.trim()) {
+    initStatus.value = '請先輸入 Management Token。';
+    return;
+  }
+
+  initStatus.value = '正在連線 Contentful Management API...';
+  const cma = createClient({ accessToken: managementToken.value.trim() });
+  
+  try {
+    const space = await cma.getSpace(spaceId.value.trim());
+    const environment = await space.getEnvironment('master');
+
+    // Define Food Content Type
+    initStatus.value = '正在檢查/建立 Food Content Type...';
+    let foodType;
+    try {
+      foodType = await environment.getContentType('food');
+      initStatus.value += '\nFood Content Type 已存在，跳過建立。';
+    } catch (e) {
+      foodType = await environment.createContentTypeWithId('food', {
+        name: 'Food',
+        fields: [
+          { id: 'name', name: 'Name', type: 'Symbol', required: true },
+          { id: 'amount', name: 'Amount', type: 'Integer' },
+          { id: 'todate', name: 'To Date', type: 'Date' },
+          { id: 'photo', name: 'Photo', type: 'Link', linkType: 'Asset' },
+          { id: 'price', name: 'Price', type: 'Integer' },
+          { id: 'shop', name: 'Shop', type: 'Symbol' },
+          { id: 'photoHash', name: 'Photo Hash', type: 'Symbol' }
+        ]
+      });
+      await foodType.publish();
+      initStatus.value += '\nFood Content Type 建立並發布成功！';
+    }
+
+    // Define Subscription Content Type
+    initStatus.value += '\n正在檢查/建立 Subscription Content Type...';
+    let subType;
+    try {
+      subType = await environment.getContentType('subscription');
+      initStatus.value += '\nSubscription Content Type 已存在，跳過建立。';
+    } catch (e) {
+      subType = await environment.createContentTypeWithId('subscription', {
+        name: 'Subscription',
+        fields: [
+          { id: 'name', name: 'Name', type: 'Symbol', required: true },
+          { id: 'price', name: 'Price', type: 'Integer' },
+          { id: 'nextdate', name: 'Next Date', type: 'Date' },
+          { id: 'site', name: 'Site', type: 'Symbol' },
+          { id: 'note', name: 'Note', type: 'RichText' },
+          { id: 'account', name: 'Account', type: 'Symbol' }
+        ]
+      });
+      await subType.publish();
+      initStatus.value += '\nSubscription Content Type 建立並發布成功！';
+    }
+
+    initStatus.value += '\n\n全部初始化完成！';
+
+  } catch (error) {
+    console.error('Initialization error:', error);
+    initStatus.value = `初始化失敗：${error.message}`;
   }
 };
 
