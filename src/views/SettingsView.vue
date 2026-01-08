@@ -185,10 +185,19 @@ const initializeContentTypes = async () => {
     let foodType;
     try {
       foodType = await environment.getContentType('food');
-      initStatus.value += '\nFood Content Type 已存在，跳過建立。';
+      // Update displayField if needed (optional, but good for consistency)
+      if (foodType.displayField !== 'name') {
+         foodType.displayField = 'name';
+         foodType = await foodType.update();
+         foodType = await foodType.publish();
+         initStatus.value += '\nFood Content Type 更新 displayField 成功。';
+      } else {
+         initStatus.value += '\nFood Content Type 已存在，跳過建立。';
+      }
     } catch (e) {
       foodType = await environment.createContentTypeWithId('food', {
         name: 'Food',
+        displayField: 'name',
         fields: [
           { id: 'name', name: 'Name', type: 'Symbol', required: true },
           { id: 'amount', name: 'Amount', type: 'Integer' },
@@ -208,10 +217,18 @@ const initializeContentTypes = async () => {
     let subType;
     try {
       subType = await environment.getContentType('subscription');
-      initStatus.value += '\nSubscription Content Type 已存在，跳過建立。';
+       if (subType.displayField !== 'name') {
+         subType.displayField = 'name';
+         subType = await subType.update();
+         subType = await subType.publish();
+         initStatus.value += '\nSubscription Content Type 更新 displayField 成功。';
+      } else {
+         initStatus.value += '\nSubscription Content Type 已存在，跳過建立。';
+      }
     } catch (e) {
       subType = await environment.createContentTypeWithId('subscription', {
         name: 'Subscription',
+        displayField: 'name',
         fields: [
           { id: 'name', name: 'Name', type: 'Symbol', required: true },
           { id: 'price', name: 'Price', type: 'Integer' },
@@ -546,6 +563,21 @@ const processImportCSV = async (csvContent) => {
     let failCount = 0;
     let errors = [];
 
+    // Field mapping to normalize CSV headers to Contentful Field IDs
+    const fieldMapping = {
+      'name': 'name', 'Name': 'name', 'NAME': 'name',
+      'amount': 'amount', 'Amount': 'amount', 'AMOUNT': 'amount',
+      'price': 'price', 'Price': 'price', 'PRICE': 'price',
+      'shop': 'shop', 'Shop': 'shop', 'SHOP': 'shop',
+      'site': 'site', 'Site': 'site', 'SITE': 'site',
+      'account': 'account', 'Account': 'account', 'ACCOUNT': 'account',
+      'note': 'note', 'Note': 'note', 'NOTE': 'note',
+      'todate': 'todate', 'ToDate': 'todate', 'To Date': 'todate', 'to_date': 'todate',
+      'nextdate': 'nextdate', 'NextDate': 'nextdate', 'Next Date': 'nextdate', 'next_date': 'nextdate',
+      'photo': 'photo', 'Photo': 'photo', 'PHOTO': 'photo',
+      'photohash': 'photoHash', 'photoHash': 'photoHash', 'PhotoHash': 'photoHash', 'Photo Hash': 'photoHash'
+    };
+
     // Skip header
     for (let i = 1; i < lines.length; i++) {
       const cols = parseCSVLine(lines[i]);
@@ -561,10 +593,13 @@ const processImportCSV = async (csvContent) => {
         
         // Map CSV columns to Contentful fields (en-US)
         // Using for...of loop to support await inside
-        for (const key of Object.keys(rowData)) {
-          if (key === 'id' || key === 'createdAt' || key === 'updatedAt') continue; // Skip system fields
+        for (const rawKey of Object.keys(rowData)) {
+          if (rawKey === 'id' || rawKey === 'createdAt' || rawKey === 'updatedAt') continue; // Skip system fields
           
-          let value = rowData[key];
+          // Use mapping or fallback to raw key
+          const key = fieldMapping[rawKey] || fieldMapping[rawKey.toLowerCase()] || rawKey;
+
+          let value = rowData[rawKey];
           
           // Type conversions
           if (contentType === 'food') {
