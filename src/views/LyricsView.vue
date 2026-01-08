@@ -432,7 +432,7 @@ Outro（표시）
     audios: [
       {
         label: '中文版',
-        url: 'https://api.stormkit.io/volumes/file/XBssuVRKo5m6MqWyZRoyWWcHhms5Zcb2_Cfw3ihs2cIAWO1BBQ==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/6Rv13wEW9ZSpVkz8NBdmg1/2aabbae46a6601d7439043c422577579/%C3%A5__%C3%A5__%C3%A6__%C3%A9__%C3%A7__%C3%A5__%C3%A7__%C3%A7__.mp3',
         lyrics: `故事開始（標註） 
  西元兩零零四年六月十五日，這一天是國中畢業生可以在畢業紀念冊留下紀念簽名的一天，同時也是我們故事主角塗神：塗三傑――江湖人稱塗哥一切的開始。 
  
@@ -465,7 +465,7 @@ Outro（표시）
       },
       {
         label: '英文版',
-        url: 'https://api.stormkit.io/volumes/file/q-T4UYAZ2UKqp9X5J7kZihgo1GSFf45CS45AIEHYDcDSjaV6Dg==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/21wIYX9xslro75p8aPVh9w/34fb2f84415e46cc852d61d35101ddb6/%C3%A5__%C3%A5__%C3%A6__%C3%A9__%C3%A7__%C3%A5__%C3%A7__%C3%A7___%C3%A8__%C3%A8%C2%AA_.mp3',
         lyrics: `The Beginning 
  On June 15, 2004, this day marks when junior high school graduates could leave commemorative signatures in their yearbook, and it was also the beginning of everything for our story's protagonist, Tu Shen: Tu Sanjie, later known as Tu Ge. 
  
@@ -498,7 +498,7 @@ Outro（표시）
       },
       {
         label: '日語版',
-        url: 'https://api.stormkit.io/volumes/file/eN3ese-QPHlgHn_ohYLEMD-ayYX_FD2RBvvtlWH3kAodbJZHTQ==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/4ryO8Qn62fofcazD1HvkZy/2d6712a80b41d55f7d1612189b868b46/%C3%A5__%C3%A5__%C3%A6__%C3%A9__%C3%A7__%C3%A5__%C3%A7__%C3%A7___%C3%A6__%C3%A8%C2%AA_.mp3',
         lyrics: `2004年6月15日、この日は中学校の卒業生が年鑑に記念のサインを残せる日であり、物語の主人公、塗神こと塗三杰（後に塗哥として知られる）の全ての始まりでした。塗哥は台中の小さなスナックショップにいました。彼の仲間である通行（塗哥の師匠。同じ姓と名）はテレビを指差し、台北でのひまわり運動の勃発について言及しました。 
  塗哥は「政治のことはよくわからない。菓子を買いに行こう」と答えました。彼は馮兄から、彰化にはひまわりがたくさんあると聞き、来月に彰化の農場への日帰り旅行を計画していました。通の職業習慣が作動し、農場建設について専門的に話し合いました。馮兄の小さな歴史クラスリンの弟子は、「ロボットが電気工を置き換えるかもしれない」と言いました。 
  
@@ -512,7 +512,7 @@ Outro（표시）
       },
       {
         label: '粵語版',
-        url: 'https://api.stormkit.io/volumes/file/g1JiPViTMc6aH1RRrnaNyisVCPFYA1Ti4M4mD6Yz6exPP7OXoQ==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/27CwD6ASW8PhyEzcqI3MtQ/238ee01c83c469adb93f2e80eaaefb69/%C3%A5__%C3%A5__%C3%A6__%C3%A9__%C3%A7__%C3%A5__%C3%A7__%C3%A7___%C3%A7_%C2%B5%C3%A8%C2%AA_.mp3',
         lyrics: `2004年6月15日，呢日係中學畢業生喺年鑑度留紀念簽名嘅日子，都係故仔個主角，塗神即係塗三杰（之後畀人叫塗哥）嘅一切開始。塗哥喺台中一間細細嘅零食店入面。佢嘅朋友通行（塗哥嘅師傅。同姓同名）指住電視，提到台北嘅太陽花運動爆發。塗哥話：「政治我唔係好識。不如買零食去啦。」佢從馮兄度聽到彰化有好多向日葵，計劃下個月去彰化個農場一日遊。 
          
  通職業病發作，專業咁同佢傾農場建設。馮兄嘅細歷史堂阿麟嘅徒弟話：「可能啲機械人會取代電工。」阿麟話：「真係好擔心。」塗哥就話：「不過，馮兄話，呢啲係未來果陣嘅事，宜家仲未到。好似佢講咁，專心做宜家嘅嘢，慢慢一步一腳印咁過日子。」塗哥提起佢嘅同學做緊台北嘅副市長。通問：「你講緊馮兄咩？」通話：「馮兄？！ 
@@ -525,7 +525,7 @@ Outro（표시）
       },
       {
         label: '韓語版',
-        url: 'https://api.stormkit.io/volumes/file/iMpSXWx_vwfSH7bDosIqMe6wsM6XeG5I3TPtPswYuJ7UkOdA3A==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/3JFk2yV7DpJYxWAvM9lLdb/6ec41de6f2fcadb7b0ffdfd3a41d47d5/%C3%A5__%C3%A5__%C3%A6__%C3%A9__%C3%A7__%C3%A5__%C3%A7__%C3%A7___%C3%A9__%C3%A8%C2%AA_.mp3',
         lyrics: `스토리 시작 (故事開始)
 서기 2004년 6월 15일, 이날은 중학교 졸업생들이 졸업기념책에 사인을 남길 수 있는 날이자, 이야기 주인공 투신: 투삼걸―江湖 사람들은 그를 ‘투哥’라 부르는 그의 모든 것이 시작되는 날이었다. 
 
