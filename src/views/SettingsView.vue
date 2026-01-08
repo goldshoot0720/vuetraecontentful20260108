@@ -55,6 +55,19 @@
       </div>
 
       <div class="card" style="margin-top: 20px;">
+        <h3>修復資料顯示 (Republish Entries)</h3>
+        <p class="desc">若列表中的 Name 顯示為 "Untitled"，請嘗試執行此功能以重新發布所有資料。</p>
+        
+        <div class="actions start">
+          <button class="btn" @click="republishEntries('food')">修復 Food 資料</button>
+          <button class="btn" @click="republishEntries('subscription')">修復 Subscription 資料</button>
+        </div>
+        <div v-if="republishStatus" class="status-log">
+          {{ republishStatus }}
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 20px;">
         <h3>資料匯出</h3>
         <p class="desc">將資料從 Contentful 匯出為 CSV 檔案。</p>
         
@@ -100,6 +113,7 @@ const accessToken = ref('');
 const managementToken = ref('');
 const managementTestStatus = ref('');
 const initStatus = ref('');
+const republishStatus = ref('');
 const importStatus = ref('');
 const importInput = ref(null);
 
@@ -247,6 +261,71 @@ const initializeContentTypes = async () => {
   } catch (error) {
     console.error('Initialization error:', error);
     initStatus.value = `初始化失敗：${error.message}`;
+  }
+};
+
+const republishEntries = async (contentType) => {
+  if (!managementToken.value.trim()) {
+    republishStatus.value = '請先輸入 Management Token。';
+    return;
+  }
+
+  republishStatus.value = `正在連線 Contentful Management API 以修復 ${contentType}...`;
+  const cma = createClient({ accessToken: managementToken.value.trim() });
+
+  try {
+    const space = await cma.getSpace(spaceId.value.trim());
+    const environment = await space.getEnvironment('master');
+    
+    republishStatus.value = `正在取得 ${contentType} 的所有資料...`;
+    const entries = await environment.getEntries({ content_type: contentType, limit: 1000 });
+    
+    if (entries.total === 0) {
+      republishStatus.value = `找不到任何 ${contentType} 資料。`;
+      return;
+    }
+
+    republishStatus.value = `找到 ${entries.total} 筆資料，開始重新發布 (Republish)...`;
+    let count = 0;
+    let failCount = 0;
+
+    for (const entry of entries.items) {
+      try {
+        // Just publishing the existing entry forces a refresh of system properties like display title
+        // If it's in draft, we might want to publish it? 
+        // Or if it's already published, we unpublish then publish? 
+        // Actually, just .publish() on an already published entry is a valid operation (re-publish).
+        // However, if the entry has pending changes, this will publish them.
+        
+        // Strategy: We update the entry with no changes to trigger a "changed" state if needed, 
+        // but usually publish() is enough if the displayField was just changed in the content type.
+        
+        // But if the entry is NOT published (Draft), we shouldn't force publish it unless the user wants to.
+        // Assuming this is for migrated data which should be published.
+        
+        if (entry.isPublished()) {
+           const updatedEntry = await entry.publish();
+           count++;
+        } else {
+           // If it is draft, maybe just leave it? Or try to publish?
+           // Let's try to publish.
+           const updatedEntry = await entry.publish();
+           count++;
+        }
+        republishStatus.value = `進度：${count}/${entries.total} (成功)`;
+        // Rate limit
+        await new Promise(r => setTimeout(r, 150));
+      } catch (e) {
+        console.error(`Failed to republish entry ${entry.sys.id}:`, e);
+        failCount++;
+      }
+    }
+
+    republishStatus.value = `修復完成！成功：${count}，失敗/跳過：${failCount}\n請重新整理 Contentful 頁面查看結果。`;
+
+  } catch (error) {
+    console.error('Republish error:', error);
+    republishStatus.value = `修復失敗：${error.message}`;
   }
 };
 
