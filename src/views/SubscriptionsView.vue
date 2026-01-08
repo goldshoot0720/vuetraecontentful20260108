@@ -42,9 +42,7 @@
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
         <h3>{{ editingItem ? '編輯訂閱' : '新增訂閱' }}</h3>
-        <p style="color: #ff5a5f; margin-bottom: 10px; font-size: 0.9em;">
-          注意：目前使用 Contentful 作為後端，僅支援讀取模式。
-        </p>
+        
         <div class="form-group">
           <label>名稱</label>
           <input v-model="formData.name" placeholder="請輸入訂閱名稱" />
@@ -67,7 +65,7 @@
         </div>
         <div class="form-group">
           <label>備註</label>
-          <input v-model="formData.note" placeholder="備註事項" disabled title="Rich Text 暫不支援編輯" />
+          <input v-model="formData.note" placeholder="備註事項 (簡易文字)" />
         </div>
         <div class="modal-actions">
           <button class="btn" @click="closeModal">取消</button>
@@ -80,7 +78,7 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
-import { getContent } from '../services/contentful';
+import { getContent, getManagementClient } from '../services/contentful';
 
 const subscriptions = ref([]);
 const showModal = ref(false);
@@ -90,7 +88,8 @@ const formData = reactive({
   price: 0,
   nextdate: '',
   site: '',
-  note: ''
+  note: '',
+  account: ''
 });
 
 const renderRichText = (richTextDocument) => {
@@ -105,15 +104,38 @@ const renderRichText = (richTextDocument) => {
   }
 };
 
+const createRichText = (text) => {
+  if (!text) return null;
+  return {
+    nodeType: 'document',
+    data: {},
+    content: [
+      {
+        nodeType: 'paragraph',
+        data: {},
+        content: [
+          {
+            nodeType: 'text',
+            value: text,
+            marks: [],
+            data: {}
+          }
+        ]
+      }
+    ]
+  };
+};
+
 const openModal = (item = null) => {
   editingItem.value = item;
   if (item) {
-    formData.name = item.fields.name;
-    formData.price = item.fields.price;
+    formData.name = item.fields.name || '';
+    formData.price = item.fields.price || 0;
     // Format date for input[type="date"]
     const date = item.fields.nextdate;
     formData.nextdate = date ? new Date(date).toISOString().split('T')[0] : '';
-    formData.site = item.fields.site;
+    formData.site = item.fields.site || '';
+    formData.account = item.fields.account || '';
     formData.note = renderRichText(item.fields.note);
   } else {
     // Reset form
@@ -121,6 +143,7 @@ const openModal = (item = null) => {
     formData.price = 0;
     formData.nextdate = '';
     formData.site = '';
+    formData.account = '';
     formData.note = '';
   }
   showModal.value = true;
@@ -132,12 +155,94 @@ const closeModal = () => {
 };
 
 const saveSubscription = async () => {
-  alert('Contentful 模式目前僅支援讀取 (Read Only)。');
-  closeModal();
+  const cma = getManagementClient();
+  if (!cma) {
+    alert('請先至系統設定輸入 Management Token 以啟用寫入功能。');
+    return;
+  }
+
+  try {
+    const spaceId = localStorage.getItem('contentful_space_id') || 'navontrqk0l3';
+    const space = await cma.getSpace(spaceId);
+    const environment = await space.getEnvironment('master');
+
+    const fields = {
+      name: { 'en-US': formData.name },
+      price: { 'en-US': formData.price },
+      nextdate: { 'en-US': formData.nextdate ? new Date(formData.nextdate).toISOString() : null },
+      site: { 'en-US': formData.site },
+      account: { 'en-US': formData.account }
+    };
+
+    if (formData.note) {
+      fields.note = { 'en-US': createRichText(formData.note) };
+    }
+
+    if (editingItem.value) {
+      // Update
+      const entry = await environment.getEntry(editingItem.value.sys.id);
+      
+      // Update fields
+      Object.keys(fields).forEach(key => {
+        if (fields[key]['en-US'] !== undefined) {
+           entry.fields[key] = fields[key];
+        }
+      });
+      
+      const updatedEntry = await entry.update();
+      await updatedEntry.publish();
+      alert('更新成功！');
+    } else {
+      // Create
+      const entry = await environment.createEntry('subscription', {
+        fields: fields
+      });
+      await entry.publish();
+      alert('新增成功！');
+    }
+    
+    closeModal();
+    fetchData(); // Reload data
+  } catch (error) {
+    console.error('Error saving subscription:', error);
+    if (error?.status === 401) {
+      alert(`儲存失敗：Management Token 沒有存取此 Space 的權限。\n\n請確認：\n1) 目前 Space ID 是否正確：${localStorage.getItem('contentful_space_id') || 'navontrqk0l3'}\n2) 產生 CFPAT- token 的帳號是否已被加入此 Space/Organization，且有 Content Management 權限。`);
+      return;
+    }
+    alert('儲存失敗：' + (error?.message || 'Unknown error'));
+  }
 };
 
 const deleteSubscription = async (item) => {
-  alert('Contentful 模式目前僅支援讀取 (Read Only)。');
+  if (!confirm('確定要刪除這個項目嗎？')) return;
+
+  const cma = getManagementClient();
+  if (!cma) {
+    alert('請先至系統設定輸入 Management Token 以啟用寫入功能。');
+    return;
+  }
+
+  try {
+    const spaceId = localStorage.getItem('contentful_space_id') || 'navontrqk0l3';
+    const space = await cma.getSpace(spaceId);
+    const environment = await space.getEnvironment('master');
+    const entry = await environment.getEntry(item.sys.id);
+    
+    if (entry.isPublished()) {
+      await entry.unpublish();
+    }
+    await entry.delete();
+    
+    alert('刪除成功！');
+    fetchData();
+  } catch (error) {
+    console.error('Error deleting subscription:', error);
+    if (error?.status === 401) {
+      alert(`刪除失敗：Management Token 沒有存取此 Space 的權限。\n\n請確認：\n1) 目前 Space ID 是否正確：${localStorage.getItem('contentful_space_id') || 'navontrqk0l3'}\n2) 產生 CFPAT- token 的帳號是否已被加入此 Space/Organization，且有 Content Management 權限。`);
+      return;
+    }
+    alert('刪除失敗：' + (error?.message || 'Unknown error'));
+  }
 };
 
 const fetchData = async () => {

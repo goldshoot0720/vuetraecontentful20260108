@@ -69,10 +69,10 @@ const lyricsList = ref([
   { 
     name: '鋒兄進化Show🔥', 
     audios: [
-      { label: '中文版', url: 'https://api.stormkit.io/volumes/file/0UXeD7XkvwiWmz6Hnsdil5gjNtFj1XEXqxjzRyt0Pk6l4b8Wsg==' },
+      { label: '中文版', url: 'https://images.ctfassets.net/navontrqk0l3/5JAFaDbQY2G00Pe1bCkYtA/013cf7ac5697f101cf2025d35736eb32/%C3%A9__%C3%A5__%C3%A9__%C3%A5__Show%C3%B0___.mp3' },
       { 
         label: '英文版', 
-        url: 'https://api.stormkit.io/volumes/file/ti9PUMEhNNa9B0aBtPym70qAoyJJoxoR2Jxb9Z9WmKYwVLnuWA==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/4mQJBpMprMyNdTldZbya5o/51dcbda824211fc32689804634b77aef/%C3%A9__%C3%A5__%C3%A9__%C3%A5__Show%C3%B0____%C3%A8__%C3%A8%C2%AA_.mp3',
         lyrics: `Hook
  Taipei is great with Brother Feng! 
  
@@ -147,7 +147,7 @@ const lyricsList = ref([
       },
       { 
         label: '粵語版', 
-        url: 'https://api.stormkit.io/volumes/file/keofAd7GMEtTdbGgSmQRIevERreU4D9JsmNRGHAX78PZR4ADjg==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/7EmnjfMJPUMn6ubHGDlNaM/46e58634d49cbbd3649521096ebc8ea3/%C3%A9__%C3%A5__%C3%A9__%C3%A5__Show%C3%B0____%C3%A7_%C2%B5%C3%A8%C2%AA_.mp3',
         lyrics: `Hook
  台北有鋒兄真好！嗨起嚟唔好逃跑！ 
  從榜首進化到市長, 呢個節奏太誇張（wow） 
@@ -186,7 +186,7 @@ const lyricsList = ref([
       },
       {
         label: '韓語版',
-        url: 'https://api.stormkit.io/volumes/file/QWkaKRAEz78hb6vySRhNcxh9RLZmk76wLrAasF7ZJ2w9OlRkRg==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/3xgwNGOJKfpUjaww5NKQs6/1578e9e495e518d271a58797a4f70dd0/%C3%A9__%C3%A5__%C3%A9__%C3%A5__Show%C3%B0____%C3%A9__%C3%A8%C2%AA_.mp3',
         lyrics: `鋒兄進化Show🔥 韓語歌詞
 타이베이에 펑셩이 있어서 정말 좋아! 
 신나게 즐겨, 도망가지 마! 

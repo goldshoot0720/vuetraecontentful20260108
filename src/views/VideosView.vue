@@ -24,11 +24,11 @@ import { ref } from 'vue';
 const videos = ref([
   {
     name: '鋒兄進化Show🔥',
-    url: 'https://api.stormkit.io/volumes/file/3JuhcYl49BXMV77YR4ttg9tpGn7MQabiRMONbblmNa8OQHqGiQ=='
+    url: 'https://videos.ctfassets.net/navontrqk0l3/5cGDNWIkJ5K4H0HYRtNGKA/5e5e2beb31b6bfc829403d7610e9fc54/%C3%A9__%C3%A5__%C3%A9__%C3%A5__Show%C3%B0___.mp4'
   },
   {
     name: '鋒兄的傳奇人生',
-    url: 'https://api.stormkit.io/volumes/file/ZeShsHQ7zp0qfCNCnTjhcIiLL3wd0sLK27DHYEsPw2v0JXzRIA=='
+    url: 'https://videos.ctfassets.net/navontrqk0l3/5wQphDy2IBywvSYz1whZju/1049b18184429058dd54a7d4dbab9075/%C3%A9__%C3%A5__%C3%A7__%C3%A5__%C3%A5__%C3%A4%C2%BA%C2%BA%C3%A7__.mp4'
   }
 ]);
 </script>

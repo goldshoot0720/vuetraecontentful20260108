@@ -43,9 +43,7 @@
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
         <h3>{{ editingItem ? '編輯食品' : '新增食品' }}</h3>
-        <p style="color: #ff5a5f; margin-bottom: 10px; font-size: 0.9em;">
-          注意：目前使用 Contentful 作為後端，僅支援讀取模式。
-        </p>
+        
         <div class="form-group">
           <label>名稱</label>
           <input v-model="formData.name" placeholder="請輸入食品名稱" />
@@ -85,7 +83,7 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
-import { getContent } from '../services/contentful';
+import { getContent, getManagementClient } from '../services/contentful';
 
 const foods = ref([]);
 const showModal = ref(false);
@@ -107,10 +105,10 @@ const getPhotoUrl = (item) => {
 const openModal = (item = null) => {
   editingItem.value = item;
   if (item) {
-    formData.name = item.fields.name;
-    formData.amount = item.fields.amount;
-    formData.price = item.fields.price;
-    formData.shop = item.fields.shop;
+    formData.name = item.fields.name || '';
+    formData.amount = item.fields.amount || 0;
+    formData.price = item.fields.price || 0;
+    formData.shop = item.fields.shop || '';
     formData.todate = item.fields.todate ? new Date(item.fields.todate).toISOString().substr(0, 10) : '';
     formData.photo = getPhotoUrl(item);
     formData.photoHash = item.fields.photoHash || '';
@@ -136,11 +134,12 @@ const closeModal = () => {
 const fetchData = async () => {
   try {
     const items = await getContent('food');
-    // Sort by todate descending locally since we fetch all
+    // Sort by todate ascending (Near to Far)
     foods.value = items.sort((a, b) => {
-      const dateA = a.fields.todate ? new Date(a.fields.todate) : new Date(0);
-      const dateB = b.fields.todate ? new Date(b.fields.todate) : new Date(0);
-      return dateB - dateA;
+      // Use Max Date for nulls so they appear at the bottom
+      const dateA = a.fields.todate ? new Date(a.fields.todate) : new Date(8640000000000000);
+      const dateB = b.fields.todate ? new Date(b.fields.todate) : new Date(8640000000000000);
+      return dateA - dateB;
     });
   } catch (error) {
     console.error('Error fetching foods:', error);
@@ -148,12 +147,91 @@ const fetchData = async () => {
 };
 
 const saveFood = async () => {
-  alert('Contentful 模式目前僅支援讀取 (Read Only)。\n若需寫入功能需使用 Management API Token。');
-  closeModal();
+  const cma = getManagementClient();
+  if (!cma) {
+    alert('請先至系統設定輸入 Management Token 以啟用寫入功能。');
+    return;
+  }
+
+  try {
+    const spaceId = localStorage.getItem('contentful_space_id') || 'navontrqk0l3';
+    const space = await cma.getSpace(spaceId);
+    const environment = await space.getEnvironment('master');
+
+    const fields = {
+      name: { 'en-US': formData.name },
+      amount: { 'en-US': formData.amount },
+      price: { 'en-US': formData.price },
+      shop: { 'en-US': formData.shop },
+      todate: { 'en-US': formData.todate ? new Date(formData.todate).toISOString() : null },
+      photoHash: { 'en-US': formData.photoHash }
+    };
+
+    if (editingItem.value) {
+      // Update
+      const entry = await environment.getEntry(editingItem.value.sys.id);
+      
+      // Update fields
+      Object.keys(fields).forEach(key => {
+        if (fields[key]['en-US'] !== undefined) {
+           entry.fields[key] = fields[key];
+        }
+      });
+      
+      const updatedEntry = await entry.update();
+      await updatedEntry.publish();
+      alert('更新成功！');
+    } else {
+      // Create
+      const entry = await environment.createEntry('food', {
+        fields: fields
+      });
+      await entry.publish();
+      alert('新增成功！');
+    }
+    
+    closeModal();
+    fetchData(); // Reload data
+  } catch (error) {
+    console.error('Error saving food:', error);
+    if (error?.status === 401) {
+      alert(`儲存失敗：Management Token 沒有存取此 Space 的權限。\n\n請確認：\n1) 目前 Space ID 是否正確：${localStorage.getItem('contentful_space_id') || 'navontrqk0l3'}\n2) 產生 CFPAT- token 的帳號是否已被加入此 Space/Organization，且有 Content Management 權限。`);
+      return;
+    }
+    alert('儲存失敗：' + (error?.message || 'Unknown error'));
+  }
 };
 
 const deleteFood = async (item) => {
-  alert('Contentful 模式目前僅支援讀取 (Read Only)。');
+  if (!confirm('確定要刪除這個項目嗎？')) return;
+
+  const cma = getManagementClient();
+  if (!cma) {
+    alert('請先至系統設定輸入 Management Token 以啟用寫入功能。');
+    return;
+  }
+
+  try {
+    const spaceId = localStorage.getItem('contentful_space_id') || 'navontrqk0l3';
+    const space = await cma.getSpace(spaceId);
+    const environment = await space.getEnvironment('master');
+    const entry = await environment.getEntry(item.sys.id);
+    
+    if (entry.isPublished()) {
+      await entry.unpublish();
+    }
+    await entry.delete();
+    
+    alert('刪除成功！');
+    fetchData();
+  } catch (error) {
+    console.error('Error deleting food:', error);
+    if (error?.status === 401) {
+      alert(`刪除失敗：Management Token 沒有存取此 Space 的權限。\n\n請確認：\n1) 目前 Space ID 是否正確：${localStorage.getItem('contentful_space_id') || 'navontrqk0l3'}\n2) 產生 CFPAT- token 的帳號是否已被加入此 Space/Organization，且有 Content Management 權限。`);
+      return;
+    }
+    alert('刪除失敗：' + (error?.message || 'Unknown error'));
+  }
 };
 
 const getDaysRemaining = (date) => {

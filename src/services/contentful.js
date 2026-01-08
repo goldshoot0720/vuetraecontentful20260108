@@ -1,4 +1,5 @@
 import { createClient } from 'contentful';
+import { createClient as createManagementClient } from 'contentful-management';
 
 const defaultSpaceId = 'navontrqk0l3';
 const defaultAccessToken = '83Q5hThGBPCIgXAYX7Fc-gSUN-psxg_j-F-gXSskQBc';
@@ -14,6 +15,14 @@ const getClient = () => {
 };
 
 export const client = getClient();
+
+export const getManagementClient = () => {
+  const managementToken = localStorage.getItem('contentful_management_token');
+  if (!managementToken) return null;
+  return createManagementClient({
+    accessToken: managementToken
+  });
+};
 
 export const getContent = async (contentType) => {
   try {
