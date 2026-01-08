@@ -116,7 +116,7 @@ const lyricsList = ref([
       },
       { 
         label: '日語版', 
-        url: 'https://api.stormkit.io/volumes/file/SF1NZ2_lvlxvw7PZOqZqX-uffZAT0J7pAnBmmlPqIr27aHxssA==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/2nBwHOaYzAddtx2mnTSsfV/04534503bacb0ea668ff2cf201479ba6/%C3%A9__%C3%A5__%C3%A9__%C3%A5__Show%C3%B0____%C3%A6__%C3%A8%C2%AA_.mp3',
         lyrics: `Hook
  台北に鋒兄がいて本当に良い！ 
  盛り上がって逃げるな！ 
