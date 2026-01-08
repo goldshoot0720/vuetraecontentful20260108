@@ -13,17 +13,17 @@
       <button class="btn">🔍 搜尋</button>
     </div>
     <div class="list">
-      <div class="item" v-for="item in subscriptions" :key="item.id">
+      <div class="item" v-for="item in subscriptions" :key="item.sys.id">
         <div class="main-info">
-          <div class="name">{{ item.get('name') || '未命名' }}</div>
-          <div class="site-link" v-if="item.get('site')">
-            <a :href="item.get('site')" target="_blank" rel="noopener">🌐 前往網站</a>
+          <div class="name">{{ item.fields.name || '未命名' }}</div>
+          <div class="site-link" v-if="item.fields.site">
+            <a :href="item.fields.site" target="_blank" rel="noopener">🌐 前往網站</a>
           </div>
         </div>
         <div class="meta">
-          <div class="price">價格：${{ item.get('price') || 0 }}</div>
-          <div class="date">下期：{{ item.get('nextdate') ? new Date(item.get('nextdate')).toLocaleDateString() : '未設定' }}</div>
-          <div class="note" v-if="item.get('note')">備註：{{ item.get('note') }}</div>
+          <div class="price">價格：${{ item.fields.price || 0 }}</div>
+          <div class="date">下期：{{ item.fields.nextdate ? new Date(item.fields.nextdate).toLocaleDateString() : '未設定' }}</div>
+          <div class="note" v-if="item.fields.note">備註：{{ renderRichText(item.fields.note) }}</div>
         </div>
         <div class="ops">
           <button class="btn" @click="openModal(item)">編輯</button>
@@ -39,6 +39,9 @@
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
         <h3>{{ editingItem ? '編輯訂閱' : '新增訂閱' }}</h3>
+        <p style="color: #ff5a5f; margin-bottom: 10px; font-size: 0.9em;">
+          注意：目前使用 Contentful 作為後端，僅支援讀取模式。
+        </p>
         <div class="form-group">
           <label>名稱</label>
           <input v-model="formData.name" placeholder="請輸入訂閱名稱" />
@@ -57,7 +60,7 @@
         </div>
         <div class="form-group">
           <label>備註</label>
-          <input v-model="formData.note" placeholder="備註事項" />
+          <input v-model="formData.note" placeholder="備註事項" disabled title="Rich Text 暫不支援編輯" />
         </div>
         <div class="modal-actions">
           <button class="btn" @click="closeModal">取消</button>
@@ -70,7 +73,7 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
-import Parse from '../services/parse';
+import { getContent } from '../services/contentful';
 
 const subscriptions = ref([]);
 const showModal = ref(false);
@@ -83,16 +86,28 @@ const formData = reactive({
   note: ''
 });
 
+const renderRichText = (richTextDocument) => {
+  if (!richTextDocument || !richTextDocument.content) return '';
+  // Simple text extraction
+  try {
+    return richTextDocument.content
+      .map(node => node.content ? node.content.map(c => c.value).join('') : '')
+      .join('\n');
+  } catch (e) {
+    return 'Rich Text Content';
+  }
+};
+
 const openModal = (item = null) => {
   editingItem.value = item;
   if (item) {
-    formData.name = item.get('name');
-    formData.price = item.get('price');
+    formData.name = item.fields.name;
+    formData.price = item.fields.price;
     // Format date for input[type="date"]
-    const date = item.get('nextdate');
+    const date = item.fields.nextdate;
     formData.nextdate = date ? new Date(date).toISOString().split('T')[0] : '';
-    formData.site = item.get('site');
-    formData.note = item.get('note');
+    formData.site = item.fields.site;
+    formData.note = renderRichText(item.fields.note);
   } else {
     // Reset form
     formData.name = '';
@@ -110,53 +125,23 @@ const closeModal = () => {
 };
 
 const saveSubscription = async () => {
-  try {
-    const Subscriptions = Parse.Object.extend('subscription');
-    let subscription;
-
-    if (editingItem.value) {
-      subscription = editingItem.value;
-    } else {
-      subscription = new Subscriptions();
-    }
-
-    subscription.set('name', formData.name);
-    subscription.set('price', Number(formData.price));
-    if (formData.nextdate) {
-      subscription.set('nextdate', new Date(formData.nextdate));
-    }
-    subscription.set('site', formData.site);
-    subscription.set('note', formData.note);
-
-    await subscription.save();
-    closeModal();
-    fetchData(); // Refresh list
-  } catch (error) {
-    console.error('Error saving subscription:', error);
-    alert('儲存失敗：' + error.message);
-  }
+  alert('Contentful 模式目前僅支援讀取 (Read Only)。');
+  closeModal();
 };
 
 const deleteSubscription = async (item) => {
-  if (!confirm('確定要刪除此訂閱嗎？')) return;
-  
-  try {
-    await item.destroy();
-    fetchData(); // Refresh list
-  } catch (error) {
-    console.error('Error deleting subscription:', error);
-    alert('刪除失敗：' + error.message);
-  }
+  alert('Contentful 模式目前僅支援讀取 (Read Only)。');
 };
 
 const fetchData = async () => {
   try {
-    // 根據截圖，Class 名稱是小寫的 'subscription'
-    const Subscriptions = Parse.Object.extend('subscription');
-    const query = new Parse.Query(Subscriptions);
-    query.ascending('nextdate');
-    // 根據截圖欄位：name, nextdate, price, site, note
-    subscriptions.value = await query.find();
+    const items = await getContent('subscription');
+    // Sort by nextdate ascending
+    subscriptions.value = items.sort((a, b) => {
+      const dateA = a.fields.nextdate ? new Date(a.fields.nextdate) : new Date(8640000000000000);
+      const dateB = b.fields.nextdate ? new Date(b.fields.nextdate) : new Date(8640000000000000);
+      return dateA - dateB;
+    });
   } catch (error) {
     console.error('Error fetching subscriptions:', error);
   }

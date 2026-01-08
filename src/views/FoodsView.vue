@@ -13,19 +13,19 @@
       <button class="btn">🔍 搜尋</button>
     </div>
     <div class="cards">
-      <div class="card" v-for="item in foods" :key="item.id">
-        <div class="thumb food" :style="item.get('photo') ? { backgroundImage: `url(${item.get('photo')})` } : {}"></div>
+      <div class="card" v-for="item in foods" :key="item.sys.id">
+        <div class="thumb food" :style="getPhotoUrl(item) ? { backgroundImage: `url(${getPhotoUrl(item)})` } : {}"></div>
         <div class="meta">
-          <div class="name">{{ item.get('name') || '未命名' }}</div>
+          <div class="name">{{ item.fields.name || '未命名' }}</div>
           <div class="info">
-            <span v-if="item.get('shop')" class="shop-tag">🏠 {{ item.get('shop') }}</span>
+            <span v-if="item.fields.shop" class="shop-tag">🏠 {{ item.fields.shop }}</span>
             <div class="details">
-              <span>數量：{{ item.get('amount') || 0 }}</span>
-              <span>價格：${{ (item.get('price') || 0).toLocaleString() }}</span>
+              <span>數量：{{ item.fields.amount || 0 }}</span>
+              <span>價格：${{ (item.fields.price || 0).toLocaleString() }}</span>
             </div>
-            <div class="expiry" :class="{ expired: isExpired(item.get('todate')), warning: isExpiringSoon(item.get('todate')) }">
-              📅 {{ item.get('todate') ? new Date(item.get('todate')).toLocaleDateString() : '未設定' }}
-              <span v-if="item.get('todate')">({{ getDaysRemaining(item.get('todate')) }})</span>
+            <div class="expiry" :class="{ expired: isExpired(item.fields.todate), warning: isExpiringSoon(item.fields.todate) }">
+              📅 {{ item.fields.todate ? new Date(item.fields.todate).toLocaleDateString() : '未設定' }}
+              <span v-if="item.fields.todate">({{ getDaysRemaining(item.fields.todate) }})</span>
             </div>
           </div>
           <div class="ops">
@@ -43,6 +43,9 @@
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
         <h3>{{ editingItem ? '編輯食品' : '新增食品' }}</h3>
+        <p style="color: #ff5a5f; margin-bottom: 10px; font-size: 0.9em;">
+          注意：目前使用 Contentful 作為後端，僅支援讀取模式。
+        </p>
         <div class="form-group">
           <label>名稱</label>
           <input v-model="formData.name" placeholder="請輸入食品名稱" />
@@ -65,7 +68,7 @@
         </div>
         <div class="form-group">
           <label>圖片連結</label>
-          <input v-model="formData.photo" placeholder="https://..." />
+          <input v-model="formData.photo" placeholder="https://..." disabled />
         </div>
         <div class="modal-actions">
           <button class="btn" @click="closeModal">取消</button>
@@ -78,7 +81,7 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
-import Parse from '../services/parse';
+import { getContent } from '../services/contentful';
 
 const foods = ref([]);
 const showModal = ref(false);
@@ -92,15 +95,19 @@ const formData = reactive({
   photo: ''
 });
 
+const getPhotoUrl = (item) => {
+  return item.fields.photo?.fields?.file?.url || '';
+};
+
 const openModal = (item = null) => {
   editingItem.value = item;
   if (item) {
-    formData.name = item.get('name');
-    formData.amount = item.get('amount');
-    formData.price = item.get('price');
-    formData.shop = item.get('shop');
-    formData.todate = item.get('todate') ? item.get('todate').toISOString().substr(0, 10) : '';
-    formData.photo = item.get('photo');
+    formData.name = item.fields.name;
+    formData.amount = item.fields.amount;
+    formData.price = item.fields.price;
+    formData.shop = item.fields.shop;
+    formData.todate = item.fields.todate ? new Date(item.fields.todate).toISOString().substr(0, 10) : '';
+    formData.photo = getPhotoUrl(item);
   } else {
     Object.assign(formData, {
       name: '',
@@ -121,50 +128,25 @@ const closeModal = () => {
 
 const fetchData = async () => {
   try {
-    const query = new Parse.Query('food');
-    query.descending('todate');
-    foods.value = await query.find();
+    const items = await getContent('food');
+    // Sort by todate descending locally since we fetch all
+    foods.value = items.sort((a, b) => {
+      const dateA = a.fields.todate ? new Date(a.fields.todate) : new Date(0);
+      const dateB = b.fields.todate ? new Date(b.fields.todate) : new Date(0);
+      return dateB - dateA;
+    });
   } catch (error) {
     console.error('Error fetching foods:', error);
   }
 };
 
 const saveFood = async () => {
-  try {
-    let food;
-    if (editingItem.value) {
-      food = editingItem.value;
-    } else {
-      const Food = Parse.Object.extend('food');
-      food = new Food();
-    }
-    
-    food.set('name', formData.name);
-    food.set('amount', formData.amount);
-    food.set('price', formData.price);
-    food.set('shop', formData.shop);
-    if (formData.todate) {
-      food.set('todate', new Date(formData.todate));
-    }
-    food.set('photo', formData.photo);
-    
-    await food.save();
-    closeModal();
-    fetchData();
-  } catch (error) {
-    console.error('Error saving food:', error);
-    alert('儲存失敗：' + error.message);
-  }
+  alert('Contentful 模式目前僅支援讀取 (Read Only)。\n若需寫入功能需使用 Management API Token。');
+  closeModal();
 };
 
 const deleteFood = async (item) => {
-  if (!confirm('確定要刪除嗎？')) return;
-  try {
-    await item.destroy();
-    fetchData();
-  } catch (error) {
-    console.error('Error deleting food:', error);
-  }
+  alert('Contentful 模式目前僅支援讀取 (Read Only)。');
 };
 
 const getDaysRemaining = (date) => {

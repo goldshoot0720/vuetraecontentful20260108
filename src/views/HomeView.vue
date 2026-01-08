@@ -17,9 +17,9 @@
         <div class="card">
           <div class="card-title">🚀 後端技術</div>
           <ul class="list">
-            <li>Back4app（Parse）</li>
-            <li>資料存放於 Back4app</li>
-            <li>RESTful API + Parse SDK</li>
+            <li>Contentful (Headless CMS)</li>
+            <li>資料存放於 Contentful Space</li>
+            <li>Contentful Delivery API</li>
           </ul>
         </div>
       </div>
@@ -70,7 +70,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import Parse from '../services/parse';
+import { client } from '../services/contentful';
 
 const subscriptionTotal = ref(0);
 const subscription7 = ref(0);
@@ -97,47 +97,80 @@ const formatDate = (d) => {
 
 const fetchDashboard = async () => {
   const now = new Date();
+  const nowISO = now.toISOString();
 
-  const Subscription = Parse.Object.extend('subscription');
-  const Food = Parse.Object.extend('food');
+  try {
+    // Subscription Total
+    const subTotalRes = await client.getEntries({ content_type: 'subscription', limit: 1 });
+    subscriptionTotal.value = subTotalRes.total;
 
-  const subTotalQuery = new Parse.Query(Subscription);
-  subscriptionTotal.value = await subTotalQuery.count();
+    // Subscription 7 days
+    const sub7Res = await client.getEntries({
+      content_type: 'subscription',
+      'fields.nextdate[gte]': nowISO,
+      'fields.nextdate[lte]': addDays(now, 7).toISOString(),
+      order: 'fields.nextdate',
+      limit: 100
+    });
+    subscription7.value = sub7Res.total;
+    if (sub7Res.items.length > 0) {
+      subscription7Date.value = formatDate(sub7Res.items[0].fields.nextdate);
+    } else {
+      subscription7Date.value = '-';
+    }
 
-  const sub7Query = new Parse.Query(Subscription);
-  sub7Query.greaterThanOrEqualTo('nextdate', now);
-  sub7Query.lessThanOrEqualTo('nextdate', addDays(now, 7));
-  subscription7.value = await sub7Query.count();
-  sub7Query.ascending('nextdate');
-  const s7 = await sub7Query.first();
-  subscription7Date.value = s7 ? formatDate(s7.get('nextdate')) : '-';
+    // Subscription 30 days
+    const sub30Res = await client.getEntries({
+      content_type: 'subscription',
+      'fields.nextdate[gte]': nowISO,
+      'fields.nextdate[lte]': addDays(now, 30).toISOString(),
+      order: 'fields.nextdate',
+      limit: 100
+    });
+    subscription30.value = sub30Res.total;
+    if (sub30Res.items.length > 0) {
+      subscription30Date.value = formatDate(sub30Res.items[0].fields.nextdate);
+    } else {
+      subscription30Date.value = '-';
+    }
 
-  const sub30Query = new Parse.Query(Subscription);
-  sub30Query.greaterThanOrEqualTo('nextdate', now);
-  sub30Query.lessThanOrEqualTo('nextdate', addDays(now, 30));
-  subscription30.value = await sub30Query.count();
-  sub30Query.ascending('nextdate');
-  const s30 = await sub30Query.first();
-  subscription30Date.value = s30 ? formatDate(s30.get('nextdate')) : '-';
+    // Food Total
+    const foodTotalRes = await client.getEntries({ content_type: 'food', limit: 1 });
+    foodTotal.value = foodTotalRes.total;
 
-  const foodTotalQuery = new Parse.Query(Food);
-  foodTotal.value = await foodTotalQuery.count();
+    // Food 3 days
+    const food3Res = await client.getEntries({
+      content_type: 'food',
+      'fields.todate[gte]': nowISO,
+      'fields.todate[lte]': addDays(now, 3).toISOString(),
+      order: 'fields.todate',
+      limit: 100
+    });
+    food3.value = food3Res.total;
+    if (food3Res.items.length > 0) {
+      food3Date.value = formatDate(food3Res.items[0].fields.todate);
+    } else {
+      food3Date.value = '-';
+    }
 
-  const food3Query = new Parse.Query(Food);
-  food3Query.greaterThanOrEqualTo('todate', now);
-  food3Query.lessThanOrEqualTo('todate', addDays(now, 3));
-  food3.value = await food3Query.count();
-  food3Query.ascending('todate');
-  const f3 = await food3Query.first();
-  food3Date.value = f3 ? formatDate(f3.get('todate')) : '-';
+    // Food 7 days
+    const food7Res = await client.getEntries({
+      content_type: 'food',
+      'fields.todate[gte]': nowISO,
+      'fields.todate[lte]': addDays(now, 7).toISOString(),
+      order: 'fields.todate',
+      limit: 100
+    });
+    food7.value = food7Res.total;
+    if (food7Res.items.length > 0) {
+      food7Date.value = formatDate(food7Res.items[0].fields.todate);
+    } else {
+      food7Date.value = '-';
+    }
 
-  const food7Query = new Parse.Query(Food);
-  food7Query.greaterThanOrEqualTo('todate', now);
-  food7Query.lessThanOrEqualTo('todate', addDays(now, 7));
-  food7.value = await food7Query.count();
-  food7Query.ascending('todate');
-  const f7 = await food7Query.first();
-  food7Date.value = f7 ? formatDate(f7.get('todate')) : '-';
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+  }
 };
 
 onMounted(() => {
