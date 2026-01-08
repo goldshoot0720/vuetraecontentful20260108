@@ -258,7 +258,7 @@ AI로 보조하는 행정, 데이터 공개 새 시대~
     audios: [
       {
         label: '中文版',
-        url: 'https://api.stormkit.io/volumes/file/yN2rDWvqYI4UIFcJi6z0UPbqT0jX5zIQjYyf2jq5rElsYsL5Lw==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/3HXplH0CtpBvWo2wt8cA3k/efd12cff228e6964c2a430ee4a0b8664/%C3%A5__%C3%A4__%C3%A6__%C3%A7__%C3%A7%C2%B5_%C3%A5__%C3%A7__%C3%A7__.mp3',
         lyrics: `Intro（標註） 
  鋒兄啊你說真的還假的 
  塗哥聽了都快笑翻了 
@@ -289,7 +289,7 @@ AI로 보조하는 행정, 데이터 공개 새 시대~
       },
       {
         label: '英文版',
-        url: 'https://api.stormkit.io/volumes/file/izdJCf5J_QfS-NsfGL-u43YJ623K5QSQ-fi3kdzqkWY8fsCs-A==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/P4o6ohLT50gkUVzFfp0Wz/d2458f59d22d102cfa18b4feccbf4555/%C3%A5__%C3%A4__%C3%A6__%C3%A7__%C3%A7%C2%B5_%C3%A5__%C3%A7__%C3%A7___%C3%A8__%C3%A8%C2%AA_.mp3',
         lyrics: `Intro 
  Brother Feng, are you serious or joking? 
  Brother Tu is laughing so hard 
@@ -315,7 +315,7 @@ AI로 보조하는 행정, 데이터 공개 새 시대~
       },
       {
         label: '日語版',
-        url: 'https://api.stormkit.io/volumes/file/_Ouvryy2-NonpXyszj3muosCbgiuKkh0FCnB4etiGzlm5g3_Ng==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/68nhFSgBB5FCEzR74y2z8y/d61a20a003d1ac3fcf8ef9d0ad626abd/%C3%A5__%C3%A4__%C3%A6__%C3%A7__%C3%A7%C2%B5_%C3%A5__%C3%A7__%C3%A7___%C3%A6__%C3%A8%C2%AA_.mp3',
         lyrics: `Intro 
  鋒兄、マジで？ウソでしょ？ 
  塗哥は聞いてて笑いが止まらないよ 
@@ -341,7 +341,7 @@ AI로 보조하는 행정, 데이터 공개 새 시대~
       },
       {
         label: '粵語版',
-        url: 'https://api.stormkit.io/volumes/file/KEWUQEoSdtuYtSR_KTg4nLRIQvY-HSnN8b0Uo5qsJlx89nFe1g==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/3MhMhkNJdUI7pbdjTjs6Gr/9da156d20dbbdd0131ca217ec3bffb50/%C3%A5__%C3%A4__%C3%A6__%C3%A7__%C3%A7%C2%B5_%C3%A5__%C3%A7__%C3%A7___%C3%A7_%C2%B5%C3%A8%C2%AA_.mp3',
         lyrics: `Intro 
  阿鋒你講真定假 
  阿塗聽咗都快笑死 
@@ -369,7 +369,7 @@ AI로 보조하는 행정, 데이터 공개 새 시대~
       ,
       {
         label: '韓語版',
-        url: 'https://api.stormkit.io/volumes/file/zsLP6JxyWRSCA1H8_cHcUQs53qom7MWlkZGICb9pbSs7iXaFOg==',
+        url: 'https://images.ctfassets.net/navontrqk0l3/6bN2ir792jNvtkqTQQfmOK/a01d18797fafc4361bf26f66d32b55d6/%C3%A5__%C3%A4__%C3%A6__%C3%A7__%C3%A7%C2%B5_%C3%A5__%C3%A7__%C3%A7___%C3%A9__%C3%A8%C2%AA_.mp3',
         lyrics: `Intro（표시） 
 펑형아, 너 진짜야? 아니야? 
 투哥 듣고 거의 웃음 터질 뻔했어 
