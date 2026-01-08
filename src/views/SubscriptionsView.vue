@@ -19,6 +19,9 @@
           <div class="site-link" v-if="item.fields.site">
             <a :href="item.fields.site" target="_blank" rel="noopener">🌐 前往網站</a>
           </div>
+          <div class="account" v-if="item.fields.account">
+            👤 {{ item.fields.account }}
+          </div>
         </div>
         <div class="meta">
           <div class="price">價格：${{ item.fields.price || 0 }}</div>
@@ -57,6 +60,10 @@
         <div class="form-group">
           <label>網站連結</label>
           <input v-model="formData.site" placeholder="https://..." />
+        </div>
+        <div class="form-group">
+          <label>帳號/使用者</label>
+          <input v-model="formData.account" placeholder="請輸入帳號" />
         </div>
         <div class="form-group">
           <label>備註</label>

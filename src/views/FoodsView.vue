@@ -70,6 +70,10 @@
           <label>圖片連結</label>
           <input v-model="formData.photo" placeholder="https://..." disabled />
         </div>
+        <div class="form-group">
+          <label>圖片 Hash</label>
+          <input v-model="formData.photoHash" placeholder="Photo Hash" disabled />
+        </div>
         <div class="modal-actions">
           <button class="btn" @click="closeModal">取消</button>
           <button class="btn primary" @click="saveFood">儲存</button>
@@ -92,7 +96,8 @@ const formData = reactive({
   price: 0,
   shop: '',
   todate: '',
-  photo: ''
+  photo: '',
+  photoHash: ''
 });
 
 const getPhotoUrl = (item) => {
@@ -108,6 +113,7 @@ const openModal = (item = null) => {
     formData.shop = item.fields.shop;
     formData.todate = item.fields.todate ? new Date(item.fields.todate).toISOString().substr(0, 10) : '';
     formData.photo = getPhotoUrl(item);
+    formData.photoHash = item.fields.photoHash || '';
   } else {
     Object.assign(formData, {
       name: '',
@@ -115,7 +121,8 @@ const openModal = (item = null) => {
       price: 0,
       shop: '',
       todate: '',
-      photo: ''
+      photo: '',
+      photoHash: ''
     });
   }
   showModal.value = true;
